@@ -1,3 +1,5 @@
 #!/usr/bin/env ruby
 
 require 'tl_capture'
+
+TlCapture::CLI.start

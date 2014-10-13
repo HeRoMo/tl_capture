@@ -25,8 +25,8 @@ module TlCapture
     end
 
     # Capture Userstream
-    def cap_stream
-
+    def cap_stream(verbose:false)
+      puts "----- print captured tweet -----" if verbose
       @client.userstream do |status|
         tags=[]
         if status.hashtags
@@ -41,17 +41,10 @@ module TlCapture
                 :contents=>status.text,
                 :hash_tag=>tags.join(",")}
 
-        puts data # for DEBUG
+        puts data if verbose # for DEBUG
         Fluent::Logger.post("source.twitter", data)
       end
     end
 
   end
-end
-
-# For DEBUG
-if __FILE__ == $0
-
-  tws = TlCapture::TwsClient.new("./../../../account_config.yml")
-  tws.cap_stream
 end
