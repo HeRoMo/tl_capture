@@ -22,3 +22,10 @@ tmp
 mkmf.log
 
 .idea
+.ruby-version
+*.p12
+*.xlsx
+*.xls
+*.pptx
+account_config.yml
+td-agent.conf

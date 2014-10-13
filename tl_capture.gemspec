@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = TlCapture::VERSION
   spec.authors       = ["hero"]
   spec.email         = ["hero@asterisk-works.jp"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.summary       = %q{Disaster Information capture}
+  spec.description   = %q{Disaster Information capture}
   spec.homepage      = ""
   spec.license       = "MIT"
 
@@ -20,4 +20,9 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "bundler", "~> 1.6"
   spec.add_development_dependency "rake"
+
+  spec.add_dependency "twitter"
+  spec.add_dependency "tweetstream"
+  spec.add_dependency "fluent-logger"
+  spec.add_dependency 'thor'
 end

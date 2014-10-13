@@ -1,0 +1,8 @@
+[
+{"name": "time","type": "TIMESTAMP"},
+{"name": "tweet_time","type": "TIMESTAMP"},
+{"name":"central_dep_name","type": "STRING"},
+{"name":"local_gov_name","type": "STRING"},
+{"name":"contents","type": "STRING"},
+{"name":"hash_tag","type": "STRING"}
+]
