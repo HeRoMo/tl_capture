@@ -14,6 +14,15 @@ And then execute:
 
 ## Usage
 
+1. At first, prepare fluentd.
+2. get your twitter application setting.
+3. copy account_config.yml.template to account_config.yml, and make your config file
+4. use tl_capture command to start capture your userstream.
+
+```
+  > tl_capture tw_stream <YOUR CONFIG FILE>
+```
+
 TODO: Write usage instructions here
 
 ## Contributing
