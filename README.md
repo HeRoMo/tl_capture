@@ -10,7 +10,7 @@ Add this line to your application's Gemfile:
 
 And then execute:
 
-    $ bundle
+    $ bundle install
 
 ## Usage
 
@@ -20,10 +20,8 @@ And then execute:
 4. use tl_capture command to start capture your userstream.
 
 ```
-  > tl_capture tw_stream <YOUR CONFIG FILE>
+  > bundle exec tl_capture tw_stream <YOUR CONFIG FILE>
 ```
-
-TODO: Write usage instructions here
 
 ## Contributing
 
