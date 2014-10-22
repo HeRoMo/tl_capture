@@ -1,8 +1,13 @@
 [
 {"name": "time","type": "TIMESTAMP"},
 {"name": "tweet_time","type": "TIMESTAMP"},
-{"name":"central_dep_name","type": "STRING"},
-{"name":"local_gov_name","type": "STRING"},
+{"name": "tweet_time_jst","type": "STRING"},
+{"name":"user_id","type": "INTEGER"},
+{"name":"author","type": "STRING"},
+{"name":"author_name","type": "STRING"},
+{"name":"contents_id","type": "INTEGER"},
 {"name":"contents","type": "STRING"},
-{"name":"hash_tag","type": "STRING"}
+{"name":"hash_tag","type": "STRING"},
+{"name":"friends_count","type": "INTEGER"},
+{"name":"followers_count","type": "INTEGER"}
 ]
