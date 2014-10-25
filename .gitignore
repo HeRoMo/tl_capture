@@ -28,4 +28,4 @@ mkmf.log
 *.xls
 *.pptx
 account_config.yml
-td-agent.conf
+td-agent*.conf
