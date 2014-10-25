@@ -40,7 +40,6 @@ module TlCapture
         puts "[EVENT] #{event.to_s}"
       end
       client.userstream do |status|
-        puts "[STATUS] #{status.to_s}"
         tags=[]
         if status.hashtags
           status.hashtags.each do |tag|
