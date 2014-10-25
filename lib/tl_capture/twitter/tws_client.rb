@@ -27,7 +27,8 @@ module TlCapture
     def cap_stream(verbose:false, debug:false)
 
       Fluent::Logger::FluentLogger.open(nil, :host=>'localhost', :port=>24224) unless debug
-      puts "----- print captured tweet -----" if verbose || debug
+      puts "----- print captured tweet -----" if verbose
+      puts "----- print captured tweet on DEBUG MODE-----" if debug
       client = TweetStream::Client.new
 
       # エラー次の処理
@@ -39,7 +40,6 @@ module TlCapture
         puts "[EVENT] #{event.to_s}"
       end
       client.userstream do |status|
-        puts "[STATUS] #{status.to_s}"
         tags=[]
         if status.hashtags
           status.hashtags.each do |tag|
