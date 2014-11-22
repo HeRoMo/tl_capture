@@ -47,7 +47,7 @@ module TlCapture
           end
         end
         data = {
-                :tweet_time=>status.created_at,
+                :tweet_time=>status.created_at.to_i,
                 :tweet_time_jst=>status.created_at.strftime("%Y-%m-%d %H:%M:%S"),
                 :user_id=>status.user.id,
                 :author=>status.user.screen_name,
