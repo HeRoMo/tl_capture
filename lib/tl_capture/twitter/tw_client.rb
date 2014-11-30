@@ -48,17 +48,6 @@ module TlCapture
       end
     end
 
-    # フォローしているアカウントを取得する
-    # @return [Hash] screen_name をキーにした フォローユーザのハッシュ
-    def get_follows
-      follows = {}
-      follow_list = @client.friends({count:200})
-      follow_list.each do |user|
-        follows[user.screen_name] = user
-      end
-      return follows
-    end
-
     # ファイルを読み込みフォローを追加する
     # @param follow_list_file [String] フォローしたいスクリーンネームを1列目に含むCSVファイルを指定する
     def add_follows(follow_list_file)
@@ -83,7 +72,8 @@ module TlCapture
     # フォローしているアカウントを取得し、自治体リストに追記する。
     # @param input_file [String] フォローアカウントを追記する自治体リスト。screen_name カラムにTwitterのユーザ名を記入しておく
     # @param output_file [String] フォローアカウントを追記したリストを出力する
-    def update_follow_list(input_file, output_file=out_filename(input_file))
+    def update_follow_list(input_file, output_file=nil)
+      output_file=out_filename(input_file) if (output_file.nil? || output_file.to_s.size==0)
       follows = get_follows
       CSV.open(output_file, 'wb',quote_char:'"') do |out|
         out << ["code", "pref_name", "city_name", "pref_kana", "city_kana", "screen_name", "name", "description", "virified", "follower_count", "disaster_account"]
@@ -105,10 +95,23 @@ module TlCapture
     end
 
     private
+    # フォローしているアカウントを取得する
+    # @return [Hash] screen_name をキーにした フォローユーザのハッシュ
+    def get_follows
+      follows = {}
+      follow_list = @client.friends({count:200})
+      follow_list.each do |user|
+        follows[user.screen_name] = user
+      end
+      return follows
+    end
+
     # アウトプットファイルのファイルパスを生成する。
     def out_filename(filename)
       date_str = Date.today.strftime("%Y%m%d")
-      "#{File.dirname(filename)}/#{File.basename(filename,".csv")}_#{date_str}.csv"
+      outfile = "#{File.dirname(filename)}/#{File.basename(filename,".csv")}_#{date_str}.csv"
+      puts outfile
+      outfile
     end
   end
 end

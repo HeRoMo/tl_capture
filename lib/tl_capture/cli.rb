@@ -28,5 +28,13 @@ module TlCapture
       tw = TlCapture::TwClient.new(config_file)
       tw.add_follows(options[:input_file])
     end
+
+    desc "update_follow_list CONFIG_FILE","update follow list by twitter data"
+    option :input_file, type: :string, aliases:'-i',required:true, desc: "input follow list file"
+    option :output_file, type: :string, aliases:'-o',required:false, desc: "output file"
+    def update_follow_list(config_file="./account_config.yml")
+      tw = TlCapture::TwClient.new(config_file)
+      tw.update_follow_list(options[:input_file], options[:output_file])
+    end
   end
 end
