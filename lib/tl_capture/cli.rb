@@ -19,7 +19,7 @@ module TlCapture
     option :output_file, type: :string, aliases:'-o', desc: "output file name"
     def follows(config_file="./account_config.yml")
       tw = TlCapture::TwClient.new(config_file)
-      tw.get_follows(options[:output_file])
+      tw.show_follows(options[:output_file])
     end
 
     desc "add_follows CONFIG_FILE","add follows of input file"
