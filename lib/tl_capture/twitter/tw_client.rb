@@ -81,7 +81,7 @@ module TlCapture
     # フォローしているアカウントを取得し、自治体リストに追記する。
     # @param input_file [String] フォローアカウントを追記する自治体リスト。screen_name カラムにTwitterのユーザ名を記入しておく
     # @param output_file [String] フォローアカウントを追記したリストを出力する
-    def update_follow_list(input_file, output_file=File.dirname(input_file)+"/"+File.basename(input_file,".csv")+"_out.csv")
+    def update_follow_list(input_file, output_file=out_filename(input_file))
       follows = get_follows
       CSV.open(output_file, 'wb',quote_char:'"') do |out|
         out << ["code", "pref_name", "city_name", "pref_kana", "city_kana", "screen_name", "name", "description", "virified", "follower_count", "disaster_information"]
@@ -99,13 +99,15 @@ module TlCapture
         follows.values.each do |user|
           out << ["","地方公共団体以外にキャプチャしているツイッターアカウント","","","",user.screen_name, user.name, user.description, user.verified?, user.followers_count, user.bousai?]
         end
-
       end
-
-      puts follows.count
     end
 
-
+    private
+    # アウトプットファイルのファイルパスを生成する。
+    def out_filename(filename)
+      date_str = Date.today.strftime("%Y%m%d")
+      "#{File.dirname(filename)}/#{File.basename(filename,".csv")}_#{date_str}.csv"
+    end
   end
 end
 
