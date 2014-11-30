@@ -7,7 +7,7 @@ module TwitterUserExtension
   refine Twitter::User do
     # ユーザ名、プロフィールの説明に防災関連の特定キーワードがあるかどうかを判定する
     # @return 防災関連キーワードが含まれる場合 true それ以外は false
-    def bousai?
+    def disaster_account?
       "#{self.description},#{self.name}"=~/(防災|災害|緊急|避難|震災|地震|洪水|火山|噴火)/ ? true:false
     end
   end
@@ -32,14 +32,16 @@ module TlCapture
     # フォローしているアカウントを出力する。
     # @param output_file [String] 出力ファイル名。指定しない場合、標準出力に出力する
     def show_follows(output_file=nil)
+      header = "screen_name,name,description,verified,followers_count,disaster_account"
       begin
         output = File.open(output_file, "w") if output_file
-        puts "screen_name,name,description,verified,followers_count,disaster information" unless output
-        output.write "screen_name,name,description,verified,followers_count,disaster information\n" if output
+        puts header unless output
+        output.write "#{header}\n" if output
         follows = get_follows
         follows.values.each do |user|
-          puts "#{user.screen_name},#{user.name},'#{user.description}',#{user.verified?},#{user.followers_count},#{user.bousai?}" unless output
-          output.write "#{user.screen_name},#{user.name},'#{user.description}',#{user.verified?},#{user.followers_count},#{user.bousai?}\n" if output
+          line = "#{user.screen_name},#{user.name},'#{user.description}',#{user.verified?},#{user.followers_count},#{user.disaster_account?}"
+          puts line unless output
+          output.write "#{line}\n" if output
         end
       ensure
         output.close if output
@@ -84,7 +86,7 @@ module TlCapture
     def update_follow_list(input_file, output_file=out_filename(input_file))
       follows = get_follows
       CSV.open(output_file, 'wb',quote_char:'"') do |out|
-        out << ["code", "pref_name", "city_name", "pref_kana", "city_kana", "screen_name", "name", "description", "virified", "follower_count", "disaster_information"]
+        out << ["code", "pref_name", "city_name", "pref_kana", "city_kana", "screen_name", "name", "description", "virified", "follower_count", "disaster_account"]
         CSV.foreach(input_file, headers: true) do |row|
           next if (row["code"].nil? || row["code"].to_i == 0)
           user = follows[row["screen_name"]]
@@ -93,11 +95,11 @@ module TlCapture
           desc = user.nil? ? "" : user.description
           verified = user.nil? ? "" : user.verified?
           f_count = user.nil? ? "" : user.followers_count
-          bousai = user.nil? ? "" : user.bousai?
-          out << [row['code'],row["pref_name"],row["city_name"],row["pref_kana"],row["city_kana"],row["screen_name"], name, desc, verified, f_count, bousai]
+          disaster_account = user.nil? ? "" : user.disaster_account?
+          out << [row['code'],row["pref_name"],row["city_name"],row["pref_kana"],row["city_kana"],row["screen_name"], name, desc, verified, f_count, disaster_account]
         end
         follows.values.each do |user|
-          out << ["","地方公共団体以外にキャプチャしているツイッターアカウント","","","",user.screen_name, user.name, user.description, user.verified?, user.followers_count, user.bousai?]
+          out << ["","地方公共団体以外にキャプチャしているツイッターアカウント","","","",user.screen_name, user.name, user.description, user.verified?, user.followers_count, user.disaster_account?]
         end
       end
     end
@@ -114,5 +116,5 @@ end
 if __FILE__ == $0
    c = TlCapture::TwClient.new '/Users/hero/Develop/hackathon/tl_capture/account_config.yml'
    #c = TlCapture::TwClient.new '/Users/hero/Develop/hackathon/tl_capture/streamtest_config.yml'
-  c.update_follow_list("/Users/hero/Develop/hackathon/tl_capture/doc/全国地方公共団体twitter_utf8.csv")
+   c.update_follow_list("/Users/hero/Develop/hackathon/tl_capture/doc/全国地方公共団体twitter_utf8.csv")
 end
