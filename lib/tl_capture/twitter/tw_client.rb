@@ -31,43 +31,41 @@ module TlCapture
 
     # フォローしているアカウントを出力する。
     # @param output_file [String] 出力ファイル名。指定しない場合、標準出力に出力する
+    # TODO このメソッドは文字列を返すだけにしたほうが良い。ファイルや標準出力への出力はCLIでやるべき
     def show_follows(output_file=nil)
-      header = "screen_name,name,description,verified,followers_count,disaster_account"
-      begin
-        output = File.open(output_file, "w") if output_file
-        puts header unless output
-        output.write "#{header}\n" if output
+      header = ["screen_name","name","description","verified","followers_count","disaster_account"]
+      output = CSV.generate do |csv|
+        csv.puts header
         follows = get_follows
         follows.values.each do |user|
-          line = "#{user.screen_name},#{user.name},'#{user.description}',#{user.verified?},#{user.followers_count},#{user.disaster_account?}"
-          puts line unless output
-          output.write "#{line}\n" if output
+          line = [user.screen_name,user.name,user.description,user.verified?,user.followers_count,user.disaster_account?]
+          csv.puts line
         end
-      ensure
-        output.close if output
+      end
+      if output_file
+        File.open(output_file, "w") do |file|
+          file.puts output
+        end
+      else
+        $stdout.puts output
       end
     end
 
     # ファイルを読み込みフォローを追加する
     # @param follow_list_file [String] フォローしたいスクリーンネームを1列目に含むCSVファイルを指定する
+    # @return [Array<Twitter::User>] 新たにフォローしたユーザ
     def add_follows(follow_list_file)
-      open(follow_list_file,"r") do |file|
-        i = 0
-        twitter_ids = []
-        file.each do |line|
-          twitter_id = line.strip
-          next if twitter_id.length == 0
-          twitter_ids << twitter_id
-          twitter_ids.uniq!
-          if twitter_ids.length >= 100
-            p twitter_ids
-            @client.follow twitter_ids
-            twitter_ids.clear
-          end
-        end
-        p twitter_ids
-        @client.follow twitter_ids
+      twitter_ids = open(follow_list_file,"r") do |file|
+        file.readlines
       end
+      if twitter_ids.size > 0
+        twitter_ids = twitter_ids.uniq.map(&:strip)
+      end
+      added_user =[]
+      split_array(twitter_ids, 100).each do |ids|
+        added_user += @client.follow(ids)
+      end
+      added_user.sort{|a,b| a.screen_name <=> b.screen_name}
     end
 
     # フォローしているアカウントを取得し、自治体リストに追記する。
@@ -114,17 +112,20 @@ module TlCapture
     def out_filename(filename)
       date_str = Date.today.strftime("%Y%m%d")
       outfile = "#{File.dirname(filename)}/#{File.basename(filename,".csv")}_#{date_str}.csv"
-      puts outfile
       outfile
     end
-  end
-end
 
-if __FILE__ == $0
-   c = TlCapture::TwClient.new '/Users/hero/Develop/hackathon/tl_capture/account_config.yml'
-   #c = TlCapture::TwClient.new '/Users/hero/Develop/hackathon/tl_capture/streamtest_config.yml'
-   #c.add_follows "/Users/hero/Develop/hackathon/tl_capture/doc/account_20150705.csv"
-   # c.add_follows "/Users/hero/Develop/hackathon/tl_capture/doc/follow_user.csv"
-   #c.update_follow_list("/Users/hero/Develop/hackathon/tl_capture/doc/全国地方公共団体twitter_utf8.csv")
-   c.update_follow_list("/Users/hero/Develop/hackathon/tl_capture/doc/統合中県別市町村SNS - 全国地方公共団体twitter_20150705.csv")
+    # 配列を指定した数で分割する
+    # @param array [Array] 分割する配列
+    # @param num [Integer] 分割後の配列の要素数。
+    # @return [Array<Array>] 指定した要素数に分割された配列
+    def split_array(array, num)
+      res = []
+      t = (array.size.to_f/num).ceil
+      t.times do |i|
+        res << array[i*num,num]
+      end
+      res
+    end
+  end
 end
