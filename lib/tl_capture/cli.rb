@@ -14,19 +14,26 @@ module TlCapture
       tws.cap_stream(verbose:options[:verbose], debug:options[:debug])
     end
 
-
     desc "follows CONFIG_FILE","output follows"
     option :output_file, type: :string, aliases:'-o', desc: "output file name"
     def follows(config_file="./account_config.yml")
       tw = TlCapture::TwClient.new(config_file)
       tw.show_follows(options[:output_file])
+    rescue => e
+      $stderr.puts e.message
     end
 
     desc "add_follows CONFIG_FILE","add follows of input file"
     option :input_file, type: :string, aliases:'-i',required:true, desc: "input follows list file"
     def add_follows(config_file="./account_config.yml")
       tw = TlCapture::TwClient.new(config_file)
-      tw.add_follows(options[:input_file])
+      result = tw.add_follows(options[:input_file])
+      result.each do |user|
+        puts user.screen_name
+      end
+      puts "#{result.size} follows added."
+    rescue =>e
+      $stderr.puts e.message
     end
 
     desc "update_follow_list CONFIG_FILE","update follow list by twitter data"
@@ -35,6 +42,8 @@ module TlCapture
     def update_follow_list(config_file="./account_config.yml")
       tw = TlCapture::TwClient.new(config_file)
       tw.update_follow_list(options[:input_file], options[:output_file])
+    rescue =>e
+      $stderr.puts e.message
     end
   end
 end

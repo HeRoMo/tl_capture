@@ -32,3 +32,4 @@ files/
 /*_config.yml
 td-agent*.conf
 /*.csv
+.DS_Store

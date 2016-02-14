@@ -65,7 +65,7 @@ module TlCapture
       split_array(twitter_ids, 100).each do |ids|
         added_user += @client.follow(ids)
       end
-      added_user
+      added_user.sort{|a,b| a.screen_name <=> b.screen_name}
     end
 
     # フォローしているアカウントを取得し、自治体リストに追記する。
