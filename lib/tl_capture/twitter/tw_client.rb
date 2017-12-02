@@ -75,7 +75,7 @@ module TlCapture
       output_file=out_filename(input_file) if (output_file.nil? || output_file.to_s.size==0)
       follows = get_follows
       CSV.open(output_file, 'wb',quote_char:'"') do |out|
-        out << ["code", "pref_name", "city_name", "pref_kana", "city_kana", "screen_name", "name", "description", "virified", "follower_count", "tweet_count", "disaster_account", "created_at"]
+        out << ["code", "pref_name", "city_name", "pref_kana", "city_kana", "order", "screen_name", "name", "description", "virified", "follower_count", "tweet_count", "disaster_account", "created_at"]
         CSV.foreach(input_file, headers: true) do |row|
           next if (row["code"].nil? || row["code"].to_i == 0)
           user = follows[row["screen_name"]]
@@ -87,10 +87,10 @@ module TlCapture
           t_count = user.nil? ? "" : user.statuses_count
           disaster_account = user.nil? ? "" : user.disaster_account?
           created_at = user.nil? ? "" : user.created_at.strftime('%Y-%m-%d')
-          out << [row['code'],row["pref_name"],row["city_name"],row["pref_kana"],row["city_kana"],row["screen_name"], name, desc, verified, f_count, t_count, disaster_account, created_at]
+          out << [row['code'],row["pref_name"],row["city_name"],row["pref_kana"],row["city_kana"],row["order"],row["screen_name"], name, desc, verified, f_count, t_count, disaster_account, created_at]
         end
         follows.values.each do |user|
-          out << ["","地方公共団体以外にキャプチャしているツイッターアカウント","","","",user.screen_name, user.name, user.description, user.verified?, user.followers_count, user.statuses_count, user.disaster_account?, user.created_at]
+          out << ["","地方公共団体以外にキャプチャしているツイッターアカウント","","","","",user.screen_name, user.name, user.description, user.verified?, user.followers_count, user.statuses_count, user.disaster_account?, user.created_at.dup.localtime]
         end
       end
     end
