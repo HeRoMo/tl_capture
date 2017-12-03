@@ -3,7 +3,6 @@
 .bundle
 .config
 .yardoc
-Gemfile.lock
 InstalledFiles
 _yardoc
 coverage
@@ -20,6 +19,7 @@ tmp
 *.o
 *.a
 mkmf.log
+files/
 
 .idea
 *.iml
@@ -28,6 +28,7 @@ mkmf.log
 *.xlsx
 *.xls
 *.pptx
-*_config.yml
+/*_config.yml
 td-agent*.conf
-*.csv
+/*.csv
+.DS_Store

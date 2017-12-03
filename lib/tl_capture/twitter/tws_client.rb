@@ -16,14 +16,16 @@ module TlCapture
       TweetStream.configure do |config|
         config.consumer_key        = account_config["twitter"]["consumer_key"]
         config.consumer_secret     = account_config["twitter"]["consumer_secret"]
-        config.oauth_token        = account_config["twitter"]["oauth_token"]
-        config.oauth_token_secret = account_config["twitter"]["oauth_token_secret"]
-        config.auth_method        = :oauth
+        config.oauth_token         = account_config["twitter"]["oauth_token"]
+        config.oauth_token_secret  = account_config["twitter"]["oauth_token_secret"]
+        config.auth_method         = :oauth
       end
 
     end
 
     # Capture Userstream
+    # @param verbose [boolean] true で標準出力にも出力する
+    # @param debug [boolean] true でデバッグモード。Fluentdに出力しない。
     def cap_stream(verbose:false, debug:false)
 
       Fluent::Logger::FluentLogger.open(nil, :host=>'localhost', :port=>24224) unless debug
@@ -31,9 +33,9 @@ module TlCapture
       puts "----- print captured tweet on DEBUG MODE-----" if debug
       client = TweetStream::Client.new
 
-      # エラー次の処理
+      # エラー時の処理
       client.on_error do |message|
-        puts message
+        puts "[ERROR] #{Time.now.to_s} #{message}"
       end
 
       client.on_event(:favorite) do |event|
